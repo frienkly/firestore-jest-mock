@@ -13,6 +13,7 @@ const {
   mockUseEmulator,
   mockGetUsers,
   mockGeneratePasswordResetLink,
+  mockUpdateUser,
 } = require('../mocks/auth');
 
 describe('we can start a firebase application', () => {
@@ -137,6 +138,12 @@ describe('we can start a firebase application', () => {
         expect.assertions(1);
         await this.admin.auth().generatePasswordResetLink('test@email.com');
         expect(mockGeneratePasswordResetLink).toHaveBeenCalledWith('test@email.com');
+      });
+
+      test('update user', async () => {
+        expect.assertions(1);
+        await this.admin.auth().updateUser('testuuid', { password: 'mockpassword' });
+        expect(mockUpdateUser).toHaveBeenCalledWith('testuuid', { password: 'mockpassword' });
       });
     });
 
