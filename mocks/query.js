@@ -120,22 +120,42 @@ class Query {
   }
 
   startAfter(value) {
-    this.filters.push({ key: this._orderBy.key, comp: this._orderBy.direction === "asc" ? '>' : '<', value });
+    const isSnapshot = !!value.ref;
+    this.filters.push({
+      key: isSnapshot ? "id" : this._orderBy.key,
+      comp: isSnapshot ? ">" : this._orderBy.direction === "asc" ? '>' : '<',
+      value: isSnapshot ? value.id : value,
+    });
     return mockStartAfter(...arguments) || this;
   }
 
   startAt(value) {
-    this.filters.push({ key: this._orderBy.key, comp: this._orderBy.direction === "asc" ? '>=' : '<=', value });
+    const isSnapshot = !!value.ref;
+    this.filters.push({
+      key: isSnapshot ? "id" : this._orderBy.key,
+      comp: isSnapshot ? ">" : this._orderBy.direction === "asc" ? '>=' : '=<',
+      value: isSnapshot ? value.id : value,
+    });
     return mockStartAt(...arguments) || this;
   }
 
   endBefore(value) {
-    this.filters.push({ key: this._orderBy.key, comp: this._orderBy.direction === "asc" ? '<' : '>', value });
+    const isSnapshot = !!value.ref;
+    this.filters.push({
+      key: isSnapshot ? "id" : this._orderBy.key,
+      comp: isSnapshot ? ">" : this._orderBy.direction === "asc" ? '<' : '>',
+      value: isSnapshot ? value.id : value,
+    });
     return mockEndBefore(...arguments) || this;
   }
 
   endAt(value) {
-    this.filters.push({ key: this._orderBy.key, comp: this._orderBy.direction === "asc" ? '<=' : '>=', value });
+    const isSnapshot = !!value.ref;
+    this.filters.push({
+      key: isSnapshot ? "id" : this._orderBy.key,
+      comp: isSnapshot ? ">" : this._orderBy.direction === "asc" ? '<=' : '>=',
+      value: isSnapshot ? value.id : value,
+    });
     return mockEndAt(...arguments) || this;
   }
 

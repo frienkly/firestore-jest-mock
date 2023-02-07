@@ -26,6 +26,12 @@ module.exports = function buildQuerySnapShot(requestedRecords, filters, orderBy,
         )
         .filter(doc => typeof getPropertyByKey(doc.data(), orderBy.key) !== 'undefined')
       : _docs
+        .sort((a, b) =>
+          cmp.asc(
+            getPropertyByKey(a, "ref.path"),
+            getPropertyByKey(b, "ref.path"),
+          )
+        )
   ).slice(0, limit > 0 ? limit : undefined);
 
   return {
