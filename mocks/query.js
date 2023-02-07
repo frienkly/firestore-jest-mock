@@ -120,7 +120,7 @@ class Query {
   }
 
   startAfter(value) {
-    const isSnapshot = !!value.ref;
+    const isSnapshot = !!value?.ref;
     this.filters.push({
       key: isSnapshot ? "id" : this._orderBy.key,
       comp: isSnapshot ? ">" : this._orderBy.direction === "asc" ? '>' : '<',
@@ -130,7 +130,7 @@ class Query {
   }
 
   startAt(value) {
-    const isSnapshot = !!value.ref;
+    const isSnapshot = !!value?.ref;
     this.filters.push({
       key: isSnapshot ? "id" : this._orderBy.key,
       comp: isSnapshot ? ">" : this._orderBy.direction === "asc" ? '>=' : '=<',
@@ -140,7 +140,7 @@ class Query {
   }
 
   endBefore(value) {
-    const isSnapshot = !!value.ref;
+    const isSnapshot = !!value?.ref;
     this.filters.push({
       key: isSnapshot ? "id" : this._orderBy.key,
       comp: isSnapshot ? ">" : this._orderBy.direction === "asc" ? '<' : '>',
@@ -150,7 +150,7 @@ class Query {
   }
 
   endAt(value) {
-    const isSnapshot = !!value.ref;
+    const isSnapshot = !!value?.ref;
     this.filters.push({
       key: isSnapshot ? "id" : this._orderBy.key,
       comp: isSnapshot ? ">" : this._orderBy.direction === "asc" ? '<=' : '>=',
