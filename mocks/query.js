@@ -122,9 +122,9 @@ class Query {
   startAfter(value) {
     const isSnapshot = !!value?.ref;
     this.filters.push({
-      key: isSnapshot ? "id" : this._orderBy.key,
-      comp: isSnapshot ? ">" : this._orderBy.direction === "asc" ? '>' : '<',
-      value: isSnapshot ? value.id : value,
+      key: isSnapshot ? '_ref.path' : this._orderBy.key,
+      comp: this._orderBy.direction === 'desc' ? '<' : '>',
+      value: isSnapshot ? value.ref.path : value,
     });
     return mockStartAfter(...arguments) || this;
   }
@@ -132,9 +132,9 @@ class Query {
   startAt(value) {
     const isSnapshot = !!value?.ref;
     this.filters.push({
-      key: isSnapshot ? "id" : this._orderBy.key,
-      comp: isSnapshot ? ">" : this._orderBy.direction === "asc" ? '>=' : '=<',
-      value: isSnapshot ? value.id : value,
+      key: isSnapshot ? '_ref.path' : this._orderBy.key,
+      comp: this._orderBy.direction === 'desc' ? '<=' : '>=',
+      value: isSnapshot ? value.ref.path : value,
     });
     return mockStartAt(...arguments) || this;
   }
@@ -142,9 +142,9 @@ class Query {
   endBefore(value) {
     const isSnapshot = !!value?.ref;
     this.filters.push({
-      key: isSnapshot ? "id" : this._orderBy.key,
-      comp: isSnapshot ? ">" : this._orderBy.direction === "asc" ? '<' : '>',
-      value: isSnapshot ? value.id : value,
+      key: isSnapshot ? '_ref.path' : this._orderBy.key,
+      comp: this._orderBy.direction === 'desc' ? '>' : '<',
+      value: isSnapshot ? value.ref.path : value,
     });
     return mockEndBefore(...arguments) || this;
   }
@@ -152,9 +152,9 @@ class Query {
   endAt(value) {
     const isSnapshot = !!value?.ref;
     this.filters.push({
-      key: isSnapshot ? "id" : this._orderBy.key,
-      comp: isSnapshot ? ">" : this._orderBy.direction === "asc" ? '<=' : '>=',
-      value: isSnapshot ? value.id : value,
+      key: isSnapshot ? '_ref.path' : this._orderBy.key,
+      comp: this._orderBy.direction === 'desc' ? '>=' : '<=',
+      value: isSnapshot ? value.ref.path : value,
     });
     return mockEndAt(...arguments) || this;
   }

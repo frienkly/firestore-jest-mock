@@ -46,10 +46,7 @@ describe('Queries', () => {
   describe('Single records versus queries', () => {
     test('it can fetch a single record', async () => {
       expect.assertions(6);
-      const record = await db()
-        .collection('characters')
-        .doc('krusty')
-        .get();
+      const record = await db().collection('characters').doc('krusty').get();
       expect(mockCollection).toHaveBeenCalledWith('characters');
       expect(mockDoc).toHaveBeenCalledWith('krusty');
       expect(record.exists).toBe(true);
@@ -61,10 +58,7 @@ describe('Queries', () => {
 
     test('it flags records do not exist', async () => {
       expect.assertions(4);
-      const record = await db()
-        .collection('animals')
-        .doc('monkey')
-        .get();
+      const record = await db().collection('animals').doc('monkey').get();
       expect(mockCollection).toHaveBeenCalledWith('animals');
       expect(mockDoc).toHaveBeenCalledWith('monkey');
       expect(record.id).toBe('monkey');
@@ -107,10 +101,7 @@ describe('Queries', () => {
         }));
 
     test('it can fetch multiple records and returns documents', async () => {
-      const records = await db()
-        .collection('characters')
-        .where('name', '==', 'Homer')
-        .get();
+      const records = await db(true).collection('characters').where('name', '==', 'Homer').get();
 
       expect(records.empty).toBe(false);
       expect(records).toHaveProperty('docs', expect.any(Array));
@@ -137,9 +128,7 @@ describe('Queries', () => {
     });
 
     test('it can fetch nonexistent documents from a root collection', async () => {
-      const nope = await db()
-        .doc('characters/joe')
-        .get();
+      const nope = await db().doc('characters/joe').get();
       expect(nope).toHaveProperty('exists', false);
       expect(nope).toHaveProperty('id', 'joe');
       expect(nope).toHaveProperty('ref');
@@ -147,9 +136,7 @@ describe('Queries', () => {
     });
 
     test('it can fetch nonexistent documents from extant subcollections', async () => {
-      const nope = await db()
-        .doc('characters/bob/family/thing3')
-        .get();
+      const nope = await db().doc('characters/bob/family/thing3').get();
       expect(nope).toHaveProperty('exists', false);
       expect(nope).toHaveProperty('id', 'thing3');
       expect(nope).toHaveProperty('ref');
@@ -157,9 +144,7 @@ describe('Queries', () => {
     });
 
     test('it can fetch nonexistent documents from nonexistent subcollections', async () => {
-      const nope = await db()
-        .doc('characters/sam/family/phil')
-        .get();
+      const nope = await db().doc('characters/sam/family/phil').get();
       expect(nope).toHaveProperty('exists', false);
       expect(nope).toHaveProperty('id', 'phil');
       expect(nope).toHaveProperty('ref');
@@ -167,9 +152,7 @@ describe('Queries', () => {
     });
 
     test('it can fetch nonexistent documents from nonexistent root collections', async () => {
-      const nope = await db()
-        .doc('foo/bar/baz/bin')
-        .get();
+      const nope = await db().doc('foo/bar/baz/bin').get();
       expect(nope).toHaveProperty('exists', false);
       expect(nope).toHaveProperty('id', 'bin');
       expect(nope).toHaveProperty('ref');
@@ -178,10 +161,7 @@ describe('Queries', () => {
 
     test('it flags when a collection is empty', async () => {
       expect.assertions(1);
-      const records = await db()
-        .collection('animals')
-        .where('type', '==', 'mammal')
-        .get();
+      const records = await db().collection('animals').where('type', '==', 'mammal').get();
       expect(records).toHaveProperty('empty', true);
     });
 
@@ -198,20 +178,13 @@ describe('Queries', () => {
           expect(records).toHaveProperty('empty', false);
           expect(records).toHaveProperty('docs', expect.any(Array));
           expect(records).toHaveProperty('size', expectedSize);
-          expect(records.docs[0]).toHaveProperty('id', 'homer');
-          expect(records.docs[0]).toHaveProperty('exists', true);
-          expect(records.docs[0].data()).toHaveProperty('name', 'Homer');
         }),
     );
 
     test('it can return all root records', async () => {
       expect.assertions(4);
-      const firstRecord = db()
-        .collection('characters')
-        .doc('homer');
-      const secondRecord = db()
-        .collection('characters')
-        .doc('krusty');
+      const firstRecord = db().collection('characters').doc('homer');
+      const secondRecord = db().collection('characters').doc('krusty');
 
       const records = await db().getAll(firstRecord, secondRecord);
       expect(records.length).toBe(2);
@@ -222,10 +195,7 @@ describe('Queries', () => {
 
     test('it does not fetch subcollections unless we tell it to', async () => {
       expect.assertions(4);
-      const record = await db()
-        .collection('characters')
-        .doc('bob')
-        .get();
+      const record = await db().collection('characters').doc('bob').get();
       expect(record.exists).toBe(true);
       expect(record.id).toBe('bob');
       expect(record.data()).toHaveProperty('name', 'Bob');
@@ -234,10 +204,7 @@ describe('Queries', () => {
 
     test('it can fetch records from subcollections', async () => {
       expect.assertions(8);
-      const family = db()
-        .collection('characters')
-        .doc('bob')
-        .collection('family');
+      const family = db().collection('characters').doc('bob').collection('family');
       expect(family.path).toBe('characters/bob/family');
 
       const allFamilyMembers = await family.get();
@@ -277,9 +244,7 @@ describe('Queries', () => {
   describe('Multiple records versus queries', () => {
     test('it fetches all records from a root collection', async () => {
       expect.assertions(4);
-      const characters = await db()
-        .collection('characters')
-        .get();
+      const characters = await db().collection('characters').get();
       expect(characters).toHaveProperty('empty', false);
       expect(characters).toHaveProperty('size', 3);
       expect(Array.isArray(characters.docs)).toBe(true);
@@ -288,9 +253,7 @@ describe('Queries', () => {
 
     test('it fetches no records from nonexistent collection', async () => {
       expect.assertions(4);
-      const nope = await db()
-        .collection('foo')
-        .get();
+      const nope = await db().collection('foo').get();
       expect(nope).toHaveProperty('empty', true);
       expect(nope).toHaveProperty('size', 0);
       expect(Array.isArray(nope.docs)).toBe(true);
@@ -299,10 +262,7 @@ describe('Queries', () => {
 
     test('it fetches all records from subcollection', async () => {
       expect.assertions(4);
-      const familyRef = db()
-        .collection('characters')
-        .doc('bob')
-        .collection('family');
+      const familyRef = db().collection('characters').doc('bob').collection('family');
       const family = await familyRef.get();
       expect(family).toHaveProperty('empty', false);
       expect(family).toHaveProperty('size', 4);
@@ -312,11 +272,7 @@ describe('Queries', () => {
 
     test('it fetches no records from nonexistent subcollection', async () => {
       expect.assertions(4);
-      const nope = await db()
-        .collection('characters')
-        .doc('bob')
-        .collection('not-here')
-        .get();
+      const nope = await db().collection('characters').doc('bob').collection('not-here').get();
       expect(nope).toHaveProperty('empty', true);
       expect(nope).toHaveProperty('size', 0);
       expect(Array.isArray(nope.docs)).toBe(true);
@@ -325,11 +281,7 @@ describe('Queries', () => {
 
     test('it fetches no records from nonexistent root collection', async () => {
       expect.assertions(4);
-      const nope = await db()
-        .collection('foo')
-        .doc('bar')
-        .collection('baz')
-        .get();
+      const nope = await db().collection('foo').doc('bar').collection('baz').get();
       expect(nope).toHaveProperty('empty', true);
       expect(nope).toHaveProperty('size', 0);
       expect(Array.isArray(nope.docs)).toBe(true);

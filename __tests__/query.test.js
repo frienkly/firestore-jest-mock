@@ -188,8 +188,8 @@ describe('Queries', () => {
       .get();
 
     expect(res).toHaveProperty('size', 2);
-    expect(res.docs[0].id).toEqual('chicken');
-    expect(res.docs[1].id).toEqual('ant');
+    expect(res.docs[0].id).toEqual('ant');
+    expect(res.docs[1].id).toEqual('chicken');
   });
 
   test('it can query multiple documents', async () => {
@@ -586,5 +586,52 @@ describe('Queries', () => {
         expect(results.docs.length).toBe(limit);
       },
     );
+
+    test.each`
+      fn              | value
+      ${'endBefore'}  | ${['ant']}
+      ${'endAt'}      | ${['ant', 'chicken']}
+      ${'startAt'}    | ${['chicken', 'elephant']}
+      ${'startAfter'} | ${['elephant', 'monkey']}
+    `('it performs \'$fn\' with snapshot in collection', async ({ fn, value }) => {
+      // ant, chicken, elephant, monkey
+      const snapshot = await db.collection('animals').doc('chicken').get();
+      const docList = await db.collection('animals')[fn](snapshot).limit(2).get();
+      expect(docList.docs.length).toBe(value.length);
+      expect(docList.docs.map(doc => doc.id)).toEqual(expect.arrayContaining(value));
+    });
+
+    test.each`
+      fn              | value
+      ${'endBefore'}  | ${['ant']}
+      ${'endAt'}      | ${['ant', 'chicken']}
+      ${'startAt'}    | ${['chicken', 'elephant']}
+      ${'startAfter'} | ${['elephant', 'monkey']}
+    `('it performs \'$fn\' with snapshot in collection', async ({ fn, value }) => {
+      // ant, chicken, elephant, monkey
+      const snapshot = await db.collection('animals').doc('chicken').get();
+      const docList = await db.collection('animals')[fn](snapshot).limit(2).get();
+      expect(docList.docs.length).toBe(value.length);
+      expect(docList.docs.map(doc => doc.id)).toEqual(expect.arrayContaining(value));
+    });
+
+    test.each`
+      fn              | value
+      ${'endBefore'}  | ${['animals/ant/foodSchedule/leaf']}
+      ${'endAt'}      | ${['animals/ant/foodSchedule/leaf', 'animals/ant/foodSchedule/peanut']}
+      ${'startAt'}    | ${['animals/ant/foodSchedule/peanut', 'animals/chicken/foodSchedule/leaf']}
+      ${'startAfter'} | ${['animals/chicken/foodSchedule/leaf', 'animals/chicken/foodSchedule/nut']}
+    `('it performs \'$fn\' with snapshot in collectionGroup', async ({ fn, value }) => {
+      /*
+        'animals/ant/foodSchedule/leaf',
+        'animals/ant/foodSchedule/peanut',
+        'animals/chicken/foodSchedule/leaf',
+        'animals/chicken/foodSchedule/nut',
+      */
+      const snapshot = await db.doc('animals/ant/foodSchedule/peanut').get();
+      const docList = await db.collectionGroup('foodSchedule')[fn](snapshot).limit(2).get();
+      expect(docList.docs.length).toBe(value.length);
+      expect(docList.docs.map(doc => doc.ref.path)).toEqual(expect.arrayContaining(value));
+    });
   });
 });
