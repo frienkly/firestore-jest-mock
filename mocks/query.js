@@ -120,7 +120,7 @@ class Query {
   }
 
   startAfter(value) {
-    const isSnapshot = !!value?.ref;
+    const isSnapshot = value && value.ref;
     this.filters.push({
       key: isSnapshot ? '_ref.path' : this._orderBy.key,
       comp: this._orderBy.direction === 'desc' ? '<' : '>',
@@ -130,7 +130,7 @@ class Query {
   }
 
   startAt(value) {
-    const isSnapshot = !!value?.ref;
+    const isSnapshot = value && value.ref;
     this.filters.push({
       key: isSnapshot ? '_ref.path' : this._orderBy.key,
       comp: this._orderBy.direction === 'desc' ? '<=' : '>=',
@@ -140,7 +140,7 @@ class Query {
   }
 
   endBefore(value) {
-    const isSnapshot = !!value?.ref;
+    const isSnapshot = value && value.ref;
     this.filters.push({
       key: isSnapshot ? '_ref.path' : this._orderBy.key,
       comp: this._orderBy.direction === 'desc' ? '>' : '<',
@@ -150,7 +150,7 @@ class Query {
   }
 
   endAt(value) {
-    const isSnapshot = !!value?.ref;
+    const isSnapshot = value && value.ref;
     this.filters.push({
       key: isSnapshot ? '_ref.path' : this._orderBy.key,
       comp: this._orderBy.direction === 'desc' ? '>=' : '<=',
