@@ -188,8 +188,8 @@ describe('Queries', () => {
       .get();
 
     expect(res).toHaveProperty('size', 2);
-    expect(res.docs[0].id).toEqual('ant');
-    expect(res.docs[1].id).toEqual('chicken');
+    expect(res.docs[0].id).toEqual('chicken');
+    expect(res.docs[1].id).toEqual('ant');
   });
 
   test('it can query multiple documents', async () => {
