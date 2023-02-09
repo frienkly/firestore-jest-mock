@@ -98,7 +98,7 @@ class Query {
         `FakeFirebaseError: Invalid query. Null only supports '==' and '!=' comparisons.`,
       );
     }
-    this._orderBy = this._orderBy.key ? this._orderBy : { key: key, direction: 'asc' };
+    this._orderBy = this._orderBy.key ? this._orderBy : { key, direction: 'asc' };
     this.filters.push({ key, comp, value });
     return result || this;
   }
