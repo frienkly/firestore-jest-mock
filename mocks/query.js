@@ -22,6 +22,22 @@ class Query {
     this.isGroupQuery = isGroupQuery;
   }
 
+  #filterForQueryCursor(value, queryName) {
+    const isSnapshot = !!value?.ref;
+    const compMap = {
+      // desc, asc
+      startAfter: ['<', '>'],
+      startAt: ['<=', '>='],
+      endBefore: ['>', '<'],
+      endAt: ['>=', '<='],
+    };
+    return {
+      key: isSnapshot ? '_ref.path' : this._orderBy.key,
+      comp: this._orderBy.direction === 'desc' ? compMap[queryName][0] : compMap[queryName][1],
+      value: isSnapshot ? value.ref.path : value,
+    };
+  }
+
   get() {
     mockGet(...arguments);
     return Promise.resolve(this._get());
@@ -121,42 +137,22 @@ class Query {
   }
 
   startAfter(value) {
-    const isSnapshot = value && value.ref;
-    this.filters.push({
-      key: isSnapshot ? '_ref.path' : this._orderBy.key,
-      comp: this._orderBy.direction === 'desc' ? '<' : '>',
-      value: isSnapshot ? value.ref.path : value,
-    });
+    this.filters.push(this.#filterForQueryCursor(value, 'startAfter'));
     return mockStartAfter(...arguments) || this;
   }
 
   startAt(value) {
-    const isSnapshot = value && value.ref;
-    this.filters.push({
-      key: isSnapshot ? '_ref.path' : this._orderBy.key,
-      comp: this._orderBy.direction === 'desc' ? '<=' : '>=',
-      value: isSnapshot ? value.ref.path : value,
-    });
+    this.filters.push(this.#filterForQueryCursor(value, 'startAt'));
     return mockStartAt(...arguments) || this;
   }
 
   endBefore(value) {
-    const isSnapshot = value && value.ref;
-    this.filters.push({
-      key: isSnapshot ? '_ref.path' : this._orderBy.key,
-      comp: this._orderBy.direction === 'desc' ? '>' : '<',
-      value: isSnapshot ? value.ref.path : value,
-    });
+    this.filters.push(this.#filterForQueryCursor(value, 'endBefore'));
     return mockEndBefore(...arguments) || this;
   }
 
   endAt(value) {
-    const isSnapshot = value && value.ref;
-    this.filters.push({
-      key: isSnapshot ? '_ref.path' : this._orderBy.key,
-      comp: this._orderBy.direction === 'desc' ? '>=' : '<=',
-      value: isSnapshot ? value.ref.path : value,
-    });
+    this.filters.push(this.#filterForQueryCursor(value, 'endAt'));
     return mockEndAt(...arguments) || this;
   }
 
