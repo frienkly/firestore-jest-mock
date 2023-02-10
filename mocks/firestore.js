@@ -196,11 +196,7 @@ class FakeFirestore {
     for (const key of Object.keys(data)) {
       const keys = key.split('.');
       if (keys.length === 1) {
-        const instanceName = data[key]
-          ? data[key].constructor
-            ? data[key].constructor.name
-            : undefined
-          : undefined;
+        const instanceName = data[key]?.constructor?.name;
         target[key] = instanceName === 'ServerTimestampTransform' ? Timestamp.now() : data[key];
       } else {
         if (!target[keys[0]]) {
