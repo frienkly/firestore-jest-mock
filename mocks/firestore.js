@@ -30,6 +30,7 @@ const path = require('./path');
 
 const buildDocFromHash = require('./helpers/buildDocFromHash');
 const buildQuerySnapShot = require('./helpers/buildQuerySnapShot');
+const { Timestamp } = require('./timestamp');
 
 const _randomId = () => Math.floor(Math.random() * Number.MAX_SAFE_INTEGER).toString();
 
@@ -195,7 +196,8 @@ class FakeFirestore {
     for (const key of Object.keys(data)) {
       const keys = key.split('.');
       if (keys.length === 1) {
-        target[key] = data[key];
+        const instanceName = data[key]?.constructor?.name;
+        target[key] = instanceName === 'ServerTimestampTransform' ? Timestamp.now() : data[key];
       } else {
         if (!target[keys[0]]) {
           target[keys[0]] = {};

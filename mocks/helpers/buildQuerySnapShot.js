@@ -8,6 +8,12 @@ module.exports = function buildQuerySnapShot(requestedRecords, filters, orderBy,
     asc: (a, b) => (a < b ? -1 : 1),
     desc: (a, b) => (a < b ? 1 : -1),
   };
+  const multifieldCmp = {
+    asc: (a, b) =>
+      a[0] === b[0] ? multifieldCmp.asc(a.slice(1), b.slice(1)) : a[0] < b[0] ? -1 : 1,
+    desc: (a, b) =>
+      a[0] === b[0] ? multifieldCmp.desc(a.slice(1), b.slice(1)) : a[0] < b[0] ? 1 : -1,
+  };
   const getPropertyByKey = (obj, key) => {
     const list = key.split('.');
     if (list.length > 1) {
@@ -19,13 +25,15 @@ module.exports = function buildQuerySnapShot(requestedRecords, filters, orderBy,
     orderBy && orderBy.key
       ? _docs
         .sort((a, b) =>
-          cmp[orderBy.direction || 'asc'](
-            getPropertyByKey(a.data(), orderBy.key),
-            getPropertyByKey(b.data(), orderBy.key),
+          multifieldCmp[orderBy.direction || 'asc'](
+            [getPropertyByKey(a.data(), orderBy.key), getPropertyByKey(a, 'ref.path')],
+            [getPropertyByKey(b.data(), orderBy.key), getPropertyByKey(b, 'ref.path')],
           ),
         )
         .filter(doc => typeof getPropertyByKey(doc.data(), orderBy.key) !== 'undefined')
-      : _docs
+      : _docs.sort((a, b) =>
+        cmp.asc(getPropertyByKey(a, 'ref.path'), getPropertyByKey(b, 'ref.path')),
+      )
   ).slice(0, limit > 0 ? limit : undefined);
 
   return {

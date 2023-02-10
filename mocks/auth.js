@@ -70,7 +70,7 @@ class FakeAuth {
     return Promise.resolve(mockGeneratePasswordResetLink(...arguments) || '');
   }
 
-  updateUser(){
+  updateUser() {
     return Promise.resolve(mockUpdateUser(...arguments) || {});
   }
 
@@ -95,5 +95,5 @@ module.exports = {
   mockSetCustomUserClaims,
   mockUseEmulator,
   mockGeneratePasswordResetLink,
-  mockUpdateUser
+  mockUpdateUser,
 };

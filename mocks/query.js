@@ -22,6 +22,22 @@ class Query {
     this.isGroupQuery = isGroupQuery;
   }
 
+  #filterForQueryCursor(value, queryName) {
+    const isSnapshot = !!value?.ref;
+    const compMap = {
+      // desc, asc
+      startAfter: ['<', '>'],
+      startAt: ['<=', '>='],
+      endBefore: ['>', '<'],
+      endAt: ['>=', '<='],
+    };
+    return {
+      key: isSnapshot ? '_ref.path' : this._orderBy.key,
+      comp: this._orderBy.direction === 'desc' ? compMap[queryName][0] : compMap[queryName][1],
+      value: isSnapshot ? value.ref.path : value,
+    };
+  }
+
   get() {
     mockGet(...arguments);
     return Promise.resolve(this._get());
@@ -98,6 +114,7 @@ class Query {
         `FakeFirebaseError: Invalid query. Null only supports '==' and '!=' comparisons.`,
       );
     }
+    this._orderBy = this._orderBy.key ? this._orderBy : { key, direction: 'asc' };
     this.filters.push({ key, comp, value });
     return result || this;
   }
@@ -120,22 +137,22 @@ class Query {
   }
 
   startAfter(value) {
-    this.filters.push({ key: this._orderBy.key, comp: this._orderBy.direction === "asc" ? '>' : '<', value });
+    this.filters.push(this.#filterForQueryCursor(value, 'startAfter'));
     return mockStartAfter(...arguments) || this;
   }
 
   startAt(value) {
-    this.filters.push({ key: this._orderBy.key, comp: this._orderBy.direction === "asc" ? '>=' : '<=', value });
+    this.filters.push(this.#filterForQueryCursor(value, 'startAt'));
     return mockStartAt(...arguments) || this;
   }
 
   endBefore(value) {
-    this.filters.push({ key: this._orderBy.key, comp: this._orderBy.direction === "asc" ? '<' : '>', value });
+    this.filters.push(this.#filterForQueryCursor(value, 'endBefore'));
     return mockEndBefore(...arguments) || this;
   }
 
   endAt(value) {
-    this.filters.push({ key: this._orderBy.key, comp: this._orderBy.direction === "asc" ? '<=' : '>=', value });
+    this.filters.push(this.#filterForQueryCursor(value, 'endAt'));
     return mockEndAt(...arguments) || this;
   }
 
