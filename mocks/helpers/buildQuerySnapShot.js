@@ -152,6 +152,19 @@ function _shouldCompareNumerically(a, b) {
   return typeof a === 'number' && typeof b === 'number';
 }
 
+function _shouldCompareTimestampWithTimestamp(a, b) {
+  //We check whether toMillis method exists to support both Timestamp mock and Firestore Timestamp object
+  //B is expected to be Date, not Timestamp, just like Firestore does
+  return (
+    typeof a === 'object' &&
+    a !== null &&
+    typeof a.toMillis === 'function' &&
+    typeof b === 'object' &&
+    b !== null &&
+    typeof b.toMillis === 'function'
+  );
+}
+
 function _shouldCompareTimestamp(a, b) {
   //We check whether toMillis method exists to support both Timestamp mock and Firestore Timestamp object
   //B is expected to be Date, not Timestamp, just like Firestore does
@@ -172,6 +185,9 @@ function _recordsLessThanValue(records, key, value) {
     if (_shouldCompareNumerically(v, value)) {
       return v < value;
     }
+    if (_shouldCompareTimestampWithTimestamp(v, value)) {
+      return v.toMillis() < value.toMillis;
+    }
     if (_shouldCompareTimestamp(v, value)) {
       return v.toMillis() < value;
     }
@@ -191,6 +207,9 @@ function _recordsLessThanOrEqualToValue(records, key, value) {
     if (_shouldCompareNumerically(v, value)) {
       return v <= value;
     }
+    if (_shouldCompareTimestampWithTimestamp(v, value)) {
+      return v.toMillis() <= value.toMillis;
+    }
     if (_shouldCompareTimestamp(v, value)) {
       return v.toMillis() <= value;
     }
@@ -207,6 +226,9 @@ function _recordsLessThanOrEqualToValue(records, key, value) {
 function _recordsEqualToValue(records, key, value) {
   return _recordsWithKey(records, key).filter(record => {
     const v = _getValueByKey(record, key);
+    if (_shouldCompareTimestampWithTimestamp(v, value)) {
+      return v.toMillis() === value.toMillis;
+    }
     if (_shouldCompareTimestamp(v, value)) {
       //NOTE: for equality, we must compare numbers!
       return v.toMillis() === value.getTime();
@@ -224,6 +246,9 @@ function _recordsEqualToValue(records, key, value) {
 function _recordsNotEqualToValue(records, key, value) {
   return _recordsWithKey(records, key).filter(record => {
     const v = _getValueByKey(record, key);
+    if (_shouldCompareTimestampWithTimestamp(v, value)) {
+      return v.toMillis() !== value.toMillis;
+    }
     if (_shouldCompareTimestamp(v, value)) {
       //NOTE: for equality, we must compare numbers!
       return v.toMillis() !== value.getTime();
@@ -244,6 +269,9 @@ function _recordsGreaterThanOrEqualToValue(records, key, value) {
     if (_shouldCompareNumerically(v, value)) {
       return v >= value;
     }
+    if (_shouldCompareTimestampWithTimestamp(v, value)) {
+      return v.toMillis() >= value.toMillis;
+    }
     if (_shouldCompareTimestamp(v, value)) {
       return v.toMillis() >= value;
     }
@@ -262,6 +290,9 @@ function _recordsGreaterThanValue(records, key, value) {
     const v = _getValueByKey(record, key);
     if (_shouldCompareNumerically(v, value)) {
       return v > value;
+    }
+    if (_shouldCompareTimestampWithTimestamp(v, value)) {
+      return v.toMillis() > value.toMillis;
     }
     if (_shouldCompareTimestamp(v, value)) {
       return v.toMillis() > value;
