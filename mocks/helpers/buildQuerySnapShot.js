@@ -186,7 +186,7 @@ function _recordsLessThanValue(records, key, value) {
       return v < value;
     }
     if (_shouldCompareTimestampWithTimestamp(v, value)) {
-      return v.toMillis() < value.toMillis;
+      return v.toMillis() < value.toMillis();
     }
     if (_shouldCompareTimestamp(v, value)) {
       return v.toMillis() < value;
@@ -208,7 +208,7 @@ function _recordsLessThanOrEqualToValue(records, key, value) {
       return v <= value;
     }
     if (_shouldCompareTimestampWithTimestamp(v, value)) {
-      return v.toMillis() <= value.toMillis;
+      return v.toMillis() <= value.toMillis();
     }
     if (_shouldCompareTimestamp(v, value)) {
       return v.toMillis() <= value;
@@ -227,7 +227,7 @@ function _recordsEqualToValue(records, key, value) {
   return _recordsWithKey(records, key).filter(record => {
     const v = _getValueByKey(record, key);
     if (_shouldCompareTimestampWithTimestamp(v, value)) {
-      return v.toMillis() === value.toMillis;
+      return v.toMillis() === value.toMillis();
     }
     if (_shouldCompareTimestamp(v, value)) {
       //NOTE: for equality, we must compare numbers!
@@ -247,7 +247,7 @@ function _recordsNotEqualToValue(records, key, value) {
   return _recordsWithKey(records, key).filter(record => {
     const v = _getValueByKey(record, key);
     if (_shouldCompareTimestampWithTimestamp(v, value)) {
-      return v.toMillis() !== value.toMillis;
+      return v.toMillis() !== value.toMillis();
     }
     if (_shouldCompareTimestamp(v, value)) {
       //NOTE: for equality, we must compare numbers!
@@ -270,7 +270,7 @@ function _recordsGreaterThanOrEqualToValue(records, key, value) {
       return v >= value;
     }
     if (_shouldCompareTimestampWithTimestamp(v, value)) {
-      return v.toMillis() >= value.toMillis;
+      return v.toMillis() >= value.toMillis();
     }
     if (_shouldCompareTimestamp(v, value)) {
       return v.toMillis() >= value;
@@ -292,7 +292,7 @@ function _recordsGreaterThanValue(records, key, value) {
       return v > value;
     }
     if (_shouldCompareTimestampWithTimestamp(v, value)) {
-      return v.toMillis() > value.toMillis;
+      return v.toMillis() > value.toMillis();
     }
     if (_shouldCompareTimestamp(v, value)) {
       return v.toMillis() > value;

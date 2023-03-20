@@ -192,6 +192,23 @@ describe('Queries', () => {
     expect(res.docs[1].id).toEqual('ant');
   });
 
+  test.each([['>'], ['>='], ['<'], ['<='], ['=='], ['!=']])(
+    'it can query timestamp values for %s than condition',
+    async comp => {
+      const res1 = await db
+        .collection('animals')
+        .where('createdAt', comp, new Date(1628939129 * 1000))
+        .get();
+
+      const res2 = await db
+        .collection('animals')
+        .where('createdAt', comp, new FakeFirestore.Timestamp(1628939129, 0))
+        .get();
+
+      expect(res1.docs.map(doc => doc.id)).toEqual(res2.docs.map(doc => doc.id));
+    },
+  );
+
   test('it can query multiple documents', async () => {
     expect.assertions(9);
     const animals = await db.collection('animals').where('type', '==', 'mammal').get();
