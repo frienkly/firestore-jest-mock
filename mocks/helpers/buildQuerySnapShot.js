@@ -154,7 +154,7 @@ function _shouldCompareNumerically(a, b) {
 
 function _shouldCompareTimestampWithTimestamp(a, b) {
   //We check whether toMillis method exists to support both Timestamp mock and Firestore Timestamp object
-  //B is expected to be Date, not Timestamp, just like Firestore does
+  //B is expected to be Timestamp, just like Firestore does
   return (
     typeof a === 'object' &&
     a !== null &&
@@ -167,7 +167,7 @@ function _shouldCompareTimestampWithTimestamp(a, b) {
 
 function _shouldCompareTimestamp(a, b) {
   //We check whether toMillis method exists to support both Timestamp mock and Firestore Timestamp object
-  //B is expected to be Date, not Timestamp, just like Firestore does
+  //B is expected to be Date, just like Firestore does
   return (
     typeof a === 'object' && a !== null && typeof a.toMillis === 'function' && b instanceof Date
   );
